@@ -1,0 +1,57 @@
+seed_everything: 0
+trainer:
+  accelerator: auto
+  callbacks:
+    - class_path: LearningRateMonitor
+      init_args:
+        logging_interval: epoch
+    - class_path: EarlyStopping
+      init_args:
+        monitor: val/loss
+        patience: 15
+
+  max_epochs: 100
+  check_val_every_n_epoch: 1
+  log_every_n_steps: 1
+  enable_checkpointing: true
+  default_root_dir: <path>
+
+data: ../../../datamodules/m_sa_crop_type/no_metadata_prithvi_bands.yaml
+
+model:
+  class_path: terratorch.tasks.SemanticSegmentationTask
+  init_args:
+    model_factory: EncoderDecoderFactory
+    model_args:
+      backbone: prithvi_eo_v2_300
+      backbone_pretrained: true
+      backbone_bands: ["BLUE", "GREEN", "RED", "NIR_NARROW", "SWIR_1", "SWIR_2"]
+      peft_config:
+        method: LORA
+        replace_qkv: qkv # As we want to apply LoRA separately and only to Q and V, we need to separate the matrix.
+        peft_config_kwargs:
+          target_modules:
+            - qkv.q_linear
+            - qkv.v_linear
+            - mlp.fc1
+            - mlp.fc2
+          lora_alpha: 16
+          r: 16
+      necks:
+        - name: SelectIndices
+          indices: [-1]
+        - name: ReshapeTokensToImage
+      decoder: LinearDecoder
+      decoder_upsampling_size: 16
+      rescale: false
+      num_classes: 10
+    loss: ce
+    ignore_index: -1
+    freeze_backbone: false
+    optimizer: AdamW
+    lr: 0.0003886207408188515
+    scheduler: ReduceLROnPlateau
+    scheduler_hparams:
+      patience: 4
+      factor: 0.5
+    plot_on_val: False

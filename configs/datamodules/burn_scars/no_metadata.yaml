@@ -1,0 +1,13 @@
+class_path: peft_geofm.datamodules.BurnScarsDataModule
+init_args:
+  batch_size: 8
+  num_workers: 8
+  data_root: <all_samples_path>
+  use_metadata: no_metadata
+  train_split: datasets_splits/burn_scars/train_data.txt
+  val_split: datasets_splits/burn_scars/val_data.txt
+  test_split: datasets_splits/burn_scars/test_data.txt
+  bands: ["BLUE", "GREEN", "RED", "NIR_NARROW", "SWIR_1", "SWIR_2"]
+  train_transform:
+    - class_path: albumentations.D4
+    - class_path: albumentations.pytorch.ToTensorV2

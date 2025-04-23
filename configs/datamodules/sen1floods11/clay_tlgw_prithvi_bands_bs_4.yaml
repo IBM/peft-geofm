@@ -1,0 +1,15 @@
+class_path: peft_geofm.datamodules.Sen1Floods11DataModule
+init_args:
+  batch_size: 4
+  num_workers: 8
+  data_root: <sen1floods11_path>
+  use_metadata: clay_tlgw
+  train_split: datasets_splits/sen1floods11/train_data.txt
+  val_split: datasets_splits/sen1floods11/valid_data.txt
+  test_splits:
+    - datasets_splits/sen1floods11/test_data.txt
+    - datasets_splits/sen1floods11/bolivia_data.txt
+  bands: ["BLUE", "GREEN", "RED", "NIR_NARROW", "SWIR_1", "SWIR_2"]
+  train_transform:
+    - class_path: albumentations.D4
+    - class_path: albumentations.pytorch.ToTensorV2

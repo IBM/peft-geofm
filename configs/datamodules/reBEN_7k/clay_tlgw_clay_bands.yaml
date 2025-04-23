@@ -1,0 +1,31 @@
+class_path: peft_geofm.datamodules.ReBENDataModule
+init_args:
+  batch_size: 32
+  num_workers: 8
+  data_root: <reBEN_path>
+  use_metadata: clay_tlgw
+  train_split: datasets_splits/reBEN/reBEN_7k/train.txt
+  val_split: datasets_splits/reBEN/reBEN_7k/val.txt
+  test_splits:
+    - datasets_splits/reBEN/reBEN_7k/test.txt
+    - datasets_splits/reBEN/reBEN_7k/ood.txt
+    - datasets_splits/reBEN/reBEN_7k/Austria.txt
+    - datasets_splits/reBEN/reBEN_7k/Ireland.txt
+  bands:
+    [
+      "BLUE",
+      "GREEN",
+      "RED",
+      "RED_EDGE_1",
+      "RED_EDGE_2",
+      "RED_EDGE_3",
+      "NIR_BROAD",
+      "NIR_NARROW",
+      "SWIR_1",
+      "SWIR_2",
+    ]
+  train_transform:
+    - class_path: albumentations.D4
+    - class_path: albumentations.pytorch.ToTensorV2
+  label: segmentation
+  check_files: false

@@ -1,0 +1,19 @@
+[project]
+name = "peft-geofm"
+version = "0.0.1"
+requires-python = ">=3.10,<3.13"
+
+dependencies = [
+  "matplotlib",
+  "ipykernel",
+  "pandas",
+  "seaborn",
+  "terratorch[peft]",
+  # "terratorch[peft] @ git+https://github.com/fmartiescofet/terratorch.git@291047deb618e26d71c640a134d5ad71d8078874",
+  "albumentations>=1.4.6",
+  "numpy",
+  "torch<2.6.0",# for deformable attn
+  "pyproj",
+  "xarray",
+  "tqdm",
+]

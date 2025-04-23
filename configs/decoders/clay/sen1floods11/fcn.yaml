@@ -1,0 +1,52 @@
+seed_everything: 0
+trainer:
+  accelerator: auto
+  callbacks:
+    - class_path: LearningRateMonitor
+      init_args:
+        logging_interval: epoch
+    - class_path: EarlyStopping
+      init_args:
+        monitor: val/loss
+        patience: 15
+
+  max_epochs: 100
+  check_val_every_n_epoch: 1
+  log_every_n_steps: 1
+  enable_checkpointing: true
+  default_root_dir: <path>
+
+data: ../../../datamodules/sen1floods11/clay_tlgw_prithvi_bands_bs_4.yaml
+
+model:
+  class_path: terratorch.tasks.SemanticSegmentationTask
+  init_args:
+    model_factory: EncoderDecoderFactory
+    model_args:
+      backbone: clay_v1_base
+      backbone_pretrained: true
+      backbone_img_size: 512
+      necks:
+        - name: SelectIndices
+          indices: [-1]
+        - name: ReshapeTokensToImage
+      decoder: FCNDecoder
+      decoder_channels: 512
+      decoder_num_convs: 4
+      num_classes: 2
+    loss: ce
+    ignore_index: -1
+    freeze_backbone: false
+    optimizer: AdamW
+    lr: 0.00016624662118023317
+    scheduler: ReduceLROnPlateau
+    scheduler_hparams:
+      patience: 4
+      factor: 0.5
+    class_names:
+      - "Not water"
+      - "Water"
+    test_dataloaders_names:
+      - "same_dist"
+      - "bolivia"
+    plot_on_val: False
