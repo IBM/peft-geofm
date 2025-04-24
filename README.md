@@ -11,7 +11,7 @@ Fine-tune Smarter, Not Harder: Parameter-Efficient Fine-Tuning for Geospatial Fo
 We integrated LoRA, Visual Prompt Tuning (VPT), and ViT-Adapter into [TerraTorch](https://github.com/IBM/terratorch), a fine-tuning toolkit for GeoFMs.
 Our results show that LoRA matches or surpasses the performance of full fine-tuning on most datasets while reducing the memory consumption by 30%. 
 
-![radar.png](assets%2Fradar.png)
+![radar.png](assets%2Fradar.png =x250)
 
 Furthermore, we propose new train text splits for HLS Burn Scars and reBEN which we share in [datasets_splits](datasets_splits).
 Specifically, our HLS Burn Scars split ensures non-overlapping samples between splits to avoid data leakage and includes a validation and test split rather than only validation samples.
