@@ -9,7 +9,7 @@ Fine-tune Smarter, Not Harder: Parameter-Efficient Fine-Tuning for Geospatial Fo
 ![PEFT_methods.png](assets%2FPEFT_methods.png)
 
 We integrated LoRA, Visual Prompt Tuning (VPT), and ViT-Adapter into [TerraTorch](https://github.com/IBM/terratorch), a fine-tuning toolkit for GeoFMs.
-Our results show that LoRA matches or surpasses the performance of full fine-tuning while reducing the memory consumption by 30%. 
+Our results show that LoRA matches or surpasses the performance of full fine-tuning on most datasets while reducing the memory consumption by 30%. 
 
 ![radar.png](assets%2Fradar.png)
 
@@ -21,11 +21,12 @@ Our 7k version reduces label biases, enables faster experiments, and includes a 
 ## PEFT in TerraTorch
 
 We integrated all PEFT methods directly into TerraTorch. We shortly describe the required changes to use PEFT with a standard fine-tuning config.
+All settings work with the `EncoderDecoderFactory` and are passed as additional parameters in `model_args`. 
 
 ### LoRA
 
-You can provide a `peft_config` parameter in the `model_args` if you use the `EncoderDecoderFactory`. 
-This setting was tested for Prithvi and Clay, but may also work for other models. 
+You can provide a `peft_config` parameter for using LoRA. 
+This setting was tested with LoRA for Prithvi and Clay, but may also work for other models and methods from the [PEFT](https://github.com/huggingface/peft) package. 
 You can specify the name pattern of the LoRA modules in `target_modules`.
 LoRA is originally applied only on the queries (Q) and value (V) layers of an attention block.
 Often queries, values, and keys are combined in a single linear layer (e.g., in `timm` which is used by Prithvi).
@@ -67,7 +68,7 @@ Visual Prompt Tuning (VPT) is integrated into the backbone of Prithvi and Clay a
       ...
 ```
 
-VPT is currently implemented in this branch: https://github.com/fmartiescofet/terratorch/tree/vpt
+VPT is currently implemented in this branch: https://github.com/fmartiescofet/terratorch/tree/vpt.
 You can install it with:
 ```bash
 pip install git+https://github.com/fmartiescofet/terratorch.git@vpt
@@ -190,10 +191,6 @@ terratorch test --config configs/peft/prithvi_eo_v2_300/burn_scars/lora.yaml --d
   3. Download the `Reference_Maps` directory and `metadata.parquet` files and place them in `<path_to_reBEN>`.
   4. Use `<path_to_reBEN>` in your configuration.
 
-## License
-
-This project is licensed under the [Apache 2.0 License](LICENSE).
-
 ## Citation
 
 If our research is helpful for you, consider citing our [paper](https://arxiv.org/abs/x.x):
@@ -219,4 +216,6 @@ If you use TerraTorch, please cite the [paper](https://arxiv.org/abs/2503.20563)
 
 ## IBM Public Repository Disclosure
 
-All content in these repositories including code has been provided by IBM under the associated open source software license and IBM is under no obligation to provide enhancements, updates, or support. IBM developers produced this code as an open source project (not as an IBM product), and IBM makes no assertions as to the level of quality nor security, and will not be maintaining this code going forward.
+This project is licensed under the [Apache 2.0 License](LICENSE).
+
+All content in this repository including code has been provided by IBM under the associated open source software license and IBM is under no obligation to provide enhancements, updates, or support. IBM developers produced this code as an open source project (not as an IBM product), and IBM makes no assertions as to the level of quality nor security, and will not be maintaining this code going forward.
