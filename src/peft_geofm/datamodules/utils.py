@@ -1,3 +1,5 @@
+# Copyright contributors to the PEFT-GeoFM project
+
 from collections.abc import Iterable, Sequence
 from typing import Any
 

@@ -1,3 +1,5 @@
+# Copyright contributors to the PEFT-GeoFM project
+
 import warnings
 from collections.abc import Sequence
 from typing import Any

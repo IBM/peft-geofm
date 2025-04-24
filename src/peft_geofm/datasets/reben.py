@@ -1,3 +1,5 @@
+# Copyright contributors to the PEFT-GeoFM project
+
 import os
 import re
 from collections.abc import Sequence

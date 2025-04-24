@@ -1,10 +1,102 @@
-# PEFT-GeoFM
+# Parameter-Efficient Fine-Tuning (PEFT) for GeoFMs
 
-PEFT-GeoFM is a repository for exploring Parameter-Efficient Fine-Tuning (PEFT) techniques with Geospatial Foundation Models. It contains experimental setups, configuration files, and scripts used for [link to paper].
+This repository explores Parameter-Efficient Fine-Tuning (PEFT) techniques with Geospatial Foundation Models (GeoFM). It contains experimental setups, configuration files, and scripts used for our paper:
 
-## Installation
+Marti Escofet, F., Blumenstiel, B., Scheibenreif, L., Fraccaro, P., and Schindler, K. (2025). 
+Fine-tune Smarter, Not Harder: Parameter-Efficient Fine-Tuning for Geospatial Foundation Models.
+[arXiv preprint arXiv:x.x](https://arxiv.org/abs/x.x)
 
-### Install Required Packages
+![PEFT_methods.png](assets%2FPEFT_methods.png)
+
+We integrated LoRA, Visual Prompt Tuning (VPT), and ViT-Adapter into [TerraTorch](https://github.com/IBM/terratorch), a fine-tuning toolkit for GeoFMs.
+Our results show that LoRA matches or surpasses the performance of full fine-tuning while reducing the memory consumption by 30%. 
+
+![radar.png](assets%2Fradar.png)
+
+Furthermore, we propose new train text splits for HLS Burn Scars and reBEN which we share in [datasets_splits](datasets_splits).
+Specifically, our HLS Burn Scars split ensures non-overlapping samples between splits to avoid data leakage and includes a validation and test split rather than only validation samples.
+For reBEN (BigEarthNet 2.0), we created a smaller subset called reBEN 7k similar to BEN-GE 8k for BEN 1.0. 
+Our 7k version reduces label biases, enables faster experiments, and includes a geographic hold-out set (Austria and Ireland) for out-of-distribution (OOD) experiments.  
+
+## PEFT in TerraTorch
+
+We integrated all PEFT methods directly into TerraTorch. We shortly describe the required changes to use PEFT with a standard fine-tuning config.
+
+### LoRA
+
+You can provide a `peft_config` parameter in the `model_args` if you use the `EncoderDecoderFactory`. 
+This setting was tested for Prithvi and Clay, but may also work for other models. 
+You can specify the name pattern of the LoRA modules in `target_modules`.
+LoRA is originally applied only on the queries (Q) and value (V) layers of an attention block.
+Often queries, values, and keys are combined in a single linear layer (e.g., in `timm` which is used by Prithvi).
+Specify this layer in `replace_qkv` to split the matrix of these layers up into separate linear layers.
+Here is an example from [lora.yaml](configs%2Fpeft%2Fprithvi_eo_v2_300%2Fburn_scars%2Flora.yaml). 
+Clay works with a similar setting, see [lora.yaml](configs%2Fpeft%2Fclay_gw_clay_bands%2Fm_cashew_plantation%2Flora.yaml).
+
+```yaml
+    model_factory: EncoderDecoderFactory
+    model_args:
+      backbone: prithvi_eo_v2_300
+      ...
+      peft_config:
+        method: LORA
+        replace_qkv: qkv
+        peft_config_kwargs:
+          target_modules:
+            - qkv.q_linear
+            - qkv.v_linear
+            - mlp.fc1
+            - mlp.fc2
+          lora_alpha: 16
+          r: 16
+      ...
+```
+
+### VPT
+
+Visual Prompt Tuning (VPT) is integrated into the backbone of Prithvi and Clay and adds a few extra parameters:  
+
+```yaml
+    model_factory: EncoderDecoderFactory
+    model_args:
+      backbone: prithvi_eo_v2_300  # Similar setting for clay_v1_base
+      ...
+      backbone_vpt: true
+      backbone_vpt_n_tokens: 100
+      backbone_vpt_dropout: 0.1
+      ...
+```
+
+VPT is currently implemented in this branch: https://github.com/fmartiescofet/terratorch/tree/vpt
+You can install it with:
+```bash
+pip install git+https://github.com/fmartiescofet/terratorch.git@vpt
+```
+
+### ViT Adapter
+
+For adding the ViT Adapter to Prithvi models, you simply need to set `backbone_vit_adapter` to `True`. 
+TerraTorch automatically add the adapter layers to the model.
+
+```yaml
+    model_factory: EncoderDecoderFactory
+    model_args:
+      backbone: prithvi_eo_v2_300
+      ...
+      backbone_vit_adapter: true
+      ...
+```
+
+## Setup
+
+Download or clone this repo and create a new environment with TerraTorch.
+
+```bash
+python -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+pip install terratorch==1.0
+```
 
 To install the necessary dependencies, run:
 
@@ -29,8 +121,6 @@ If you encounter any issues, consider using these versions.
 
 ## Repository Structure
 
-- **[plots](plots)**: Contains visualizations and plots generated from experiments.
-- **[assets](assets)**: Stores figures and other media assets used in the project.
 - **[configs](configs)**: Contains configuration files for various experimental setups.
     - **[datamodules](configs/datamodules/)**: Configuration files for different datamodules. Naming conventions:
         - `no_metadata`: Only includes the image, without metadata. Used for DeCUR and Prithvi without metadata.
@@ -46,12 +136,26 @@ If you encounter any issues, consider using these versions.
 - **[datasets_splits](datasets_splits)**: Contains predefined dataset splits for Sen1Floods11, Burn Scars, and reBEN datasets.
 - **[src](src)**: Includes datamodules and preprocessing scripts, such as the script for merging Sentinel-2 bands in the reBEN dataset.
 
-### Configuration Setup
+## Fine-tuning
 
+We use the TerraTorch CLI for training and testing. The learning rates are selected using hyperparameter optimization with [TerraTorch-iterate](https://github.com/IBM/terratorch-iterate).
 Each configuration requires specifying the dataset directory and the logging directory. You can set them in the YAML files or provide them via command-line arguments as follows:
 
 ```bash
 terratorch fit --config <path_to_config> --data.data_root <path_to_corresponding_dataset> --trainer.default_root_dir <path_to_logger_folder>
+```
+
+For testing, provide the model checkpoint with `--ckpt_path`: 
+
+```bash
+terratorch test --config <path_to_config> --data.data_root <path_to_corresponding_dataset> --trainer.default_root_dir <path_to_logger_folder> --ckpt_path <path_to_model_checkpoint>
+```
+
+E.g., you can fine-tune and test Prithvi 2.0 with LoDA on Burn Scars with:
+```bash
+terratorch fit --config configs/peft/prithvi_eo_v2_300/burn_scars/lora.yaml --data.data_root data/hls_burn_scars/samples --trainer.default_root_dir output/prithvi_eo_v2_300/burn_scars/lora
+
+terratorch test --config configs/peft/prithvi_eo_v2_300/burn_scars/lora.yaml --data.data_root data/hls_burn_scars/samples --trainer.default_root_dir output/prithvi_eo_v2_300/burn_scars/lora --ckpt_path output/prithvi_eo_v2_300/burn_scars/lora/version_0/checkpoints/epoch=80.ckpt  
 ```
 
 ## Datasets
@@ -90,12 +194,28 @@ terratorch fit --config <path_to_config> --data.data_root <path_to_corresponding
 
 This project is licensed under the [Apache 2.0 License](LICENSE).
 
-TODO Add note to files: `Copyright contributors to the PEFT-GeoFM project`
-
 ## Citation
 
-TODO Add citation
+If our research is helpful for you, consider citing our [paper](https://arxiv.org/abs/x.x):
 
+```text
+@article{martiescofet2025peft,
+  title={Fine-tune Smarter, Not Harder: Parameter-Efficient Fine-Tuning for Geospatial Foundation Models},
+  author={Marti-Escofet, Francesc and Blumenstiel, Benedikt and Scheibenreif, Linus and Fraccaro, Paolo and Schindler, Konrad},
+  journal={arXiv preprint arXiv:x.x},
+  year={2025}
+}
+```
+
+If you use TerraTorch, please cite the [paper](https://arxiv.org/abs/2503.20563):
+```text
+@article{gomes2025terratorch,
+  title={TerraTorch: The Geospatial Foundation Models Toolkit},
+  author={Gomes, Carlos and Blumenstiel, Benedikt and Almeida, Joao Lucas de Sousa and de Oliveira, Pedro Henrique and Fraccaro, Paolo and Escofet, Francesc Marti and Szwarcman, Daniela and Simumba, Naomi and Kienzler, Romeo and Zadrozny, Bianca},
+  journal={arXiv preprint arXiv:2503.20563},
+  year={2025}
+}
+```
 
 ## IBM Public Repository Disclosure
 

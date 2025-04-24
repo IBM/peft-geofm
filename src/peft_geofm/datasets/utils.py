@@ -1,3 +1,5 @@
+# Copyright contributors to the PEFT-GeoFM project
+
 from datetime import datetime
 from pathlib import Path
 from typing import Literal

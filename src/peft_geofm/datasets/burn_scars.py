@@ -1,3 +1,5 @@
+# Copyright contributors to the PEFT-GeoFM project
+
 import glob
 import os
 import re
