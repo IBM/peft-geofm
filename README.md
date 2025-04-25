@@ -152,7 +152,7 @@ For testing, provide the model checkpoint with `--ckpt_path`:
 terratorch test --config <path_to_config> --data.data_root <path_to_corresponding_dataset> --trainer.default_root_dir <path_to_logger_folder> --ckpt_path <path_to_model_checkpoint>
 ```
 
-E.g., you can fine-tune and test Prithvi 2.0 with LoDA on Burn Scars with:
+E.g., you can fine-tune and test Prithvi 2.0 with LoRA on Burn Scars with:
 ```bash
 terratorch fit --config configs/peft/prithvi_eo_v2_300/burn_scars/lora.yaml --data.data_root data/hls_burn_scars/samples --trainer.default_root_dir output/prithvi_eo_v2_300/burn_scars/lora
 
