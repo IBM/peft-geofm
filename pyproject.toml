@@ -9,7 +9,6 @@ dependencies = [
   "pandas",
   "seaborn",
   "terratorch[peft]",
-  # "terratorch[peft] @ git+https://github.com/fmartiescofet/terratorch.git@291047deb618e26d71c640a134d5ad71d8078874",
   "albumentations>=1.4.6",
   "numpy",
   "torch<2.6.0",# for deformable attn
