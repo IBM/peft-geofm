@@ -4,7 +4,7 @@ This repository explores Parameter-Efficient Fine-Tuning (PEFT) techniques with 
 
 Marti Escofet, F., Blumenstiel, B., Scheibenreif, L., Fraccaro, P., and Schindler, K. (2025). 
 Fine-tune Smarter, Not Harder: Parameter-Efficient Fine-Tuning for Geospatial Foundation Models.
-[arXiv preprint arXiv:x.x](https://arxiv.org/abs/x.x)
+[arXiv preprint arXiv:2504.17397](https://arxiv.org/abs/2504.17397)
 
 ![PEFT_methods.png](assets%2FPEFT_methods.png)
 
@@ -68,10 +68,10 @@ Visual Prompt Tuning (VPT) is integrated into the backbone of Prithvi and Clay a
       ...
 ```
 
-VPT is currently implemented in this branch: https://github.com/fmartiescofet/terratorch/tree/vpt.
+VPT is implemented in the main branch but not included in the latest TerraTorch release.
 You can install it with:
 ```bash
-pip install git+https://github.com/fmartiescofet/terratorch.git@vpt
+pip install git+https://github.com/IBM/terratorch.git@main
 ```
 
 ### ViT Adapter
@@ -193,13 +193,13 @@ terratorch test --config configs/peft/prithvi_eo_v2_300/burn_scars/lora.yaml --d
 
 ## Citation
 
-If our research is helpful for you, consider citing our [paper](https://arxiv.org/abs/x.x):
+If our research is helpful for you, consider citing our [paper](https://arxiv.org/abs/2504.17397):
 
 ```text
 @article{martiescofet2025peft,
   title={Fine-tune Smarter, Not Harder: Parameter-Efficient Fine-Tuning for Geospatial Foundation Models},
   author={Marti-Escofet, Francesc and Blumenstiel, Benedikt and Scheibenreif, Linus and Fraccaro, Paolo and Schindler, Konrad},
-  journal={arXiv preprint arXiv:x.x},
+  journal={arXiv preprint arXiv:2504.17397},
   year={2025}
 }
 ```
@@ -208,7 +208,7 @@ If you use TerraTorch, please cite the [paper](https://arxiv.org/abs/2503.20563)
 ```text
 @article{gomes2025terratorch,
   title={TerraTorch: The Geospatial Foundation Models Toolkit},
-  author={Gomes, Carlos and Blumenstiel, Benedikt and Almeida, Joao Lucas de Sousa and de Oliveira, Pedro Henrique and Fraccaro, Paolo and Escofet, Francesc Marti and Szwarcman, Daniela and Simumba, Naomi and Kienzler, Romeo and Zadrozny, Bianca},
+  author={Gomes, Carlos and Blumenstiel, Benedikt and Almeida, Joao Lucas de Sousa and de Oliveira, Pedro Henrique and Fraccaro, Paolo and Marti-Escofet, Francesc and Szwarcman, Daniela and Simumba, Naomi and Kienzler, Romeo and Zadrozny, Bianca},
   journal={arXiv preprint arXiv:2503.20563},
   year={2025}
 }
