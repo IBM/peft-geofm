@@ -110,6 +110,7 @@ pip install -e .
 If you plan to use ViT-Adapter configurations (which require CUDA to compile deformable attention), install the following package:
 
 ```bash
+pip install torch<2.6.0
 pip install "MultiScaleDeformableAttention @ git+https://github.com/fundamentalvision/Deformable-DETR.git#subdirectory=models/ops"
 ```
 
@@ -199,8 +200,9 @@ If our research is helpful for you, consider citing our [paper](https://arxiv.or
 @article{martiescofet2025peft,
   title={Fine-tune Smarter, Not Harder: Parameter-Efficient Fine-Tuning for Geospatial Foundation Models},
   author={Marti-Escofet, Francesc and Blumenstiel, Benedikt and Scheibenreif, Linus and Fraccaro, Paolo and Schindler, Konrad},
-  journal={arXiv preprint arXiv:2504.17397},
-  year={2025}
+  journal={Joint European Conference on Machine Learning and Knowledge Discovery in Databases},
+  year={2025},
+  organization={Springer}
 }
 ```
 
@@ -209,8 +211,9 @@ If you use TerraTorch, please cite the [paper](https://arxiv.org/abs/2503.20563)
 @article{gomes2025terratorch,
   title={TerraTorch: The Geospatial Foundation Models Toolkit},
   author={Gomes, Carlos and Blumenstiel, Benedikt and Almeida, Joao Lucas de Sousa and de Oliveira, Pedro Henrique and Fraccaro, Paolo and Marti-Escofet, Francesc and Szwarcman, Daniela and Simumba, Naomi and Kienzler, Romeo and Zadrozny, Bianca},
-  journal={arXiv preprint arXiv:2503.20563},
-  year={2025}
+  journal={IGARSS International Geoscience and Remote Sensing Symposium},
+  year={2025},
+  organization={IEEE} 
 }
 ```
 

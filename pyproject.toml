@@ -11,7 +11,7 @@ dependencies = [
   "terratorch[peft]",
   "albumentations>=1.4.6",
   "numpy",
-  "torch<2.6.0",# for deformable attn
+  "torch>=2.9.1", # ViT-Adapter needs <2.6.0
   "pyproj",
   "xarray",
   "tqdm",
